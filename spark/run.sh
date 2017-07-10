@@ -82,7 +82,6 @@ sed -i ${SPARK_CONF_DIR}/hive-site.xml -e "s/\${system:user.name}/hive/g"
 echo "export LD_LIBRARY_PATH=\$HADOOP_HOME/lib/native" >> ~/.bashrc
 source ~/.bashrc
 
-source 
 #start spark if it's master node
 if [ $SPARK_TYPE = "master" ]
 then
@@ -107,7 +106,7 @@ fi
 # if the image has installed the livy service, start this service if necessary.
 if [ ${START_LIVY_SERVER} = "true" ]
 then
-  livy-server;
+  livy-server start;
 fi
 
 tail -f /dev/null

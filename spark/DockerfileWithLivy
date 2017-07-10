@@ -23,7 +23,8 @@ RUN     cd /opt \
      && apt-get install unzip \
      && unzip livy-server-${LIVY_VERSION}.zip \
      && rm -f livy-server-${LIVY_VERSION}.zip \
-     && mkdir ${LIVY_HOME}/logs
+     && mkdir ${LIVY_HOME}/logs \
+     && mv ${LIVY_HOME}/conf ${LIVY_HOME}/conf.bak
 
 
 ENV     PYSPARK_PYTHON=/usr/bin/python2.7
@@ -43,6 +44,8 @@ EXPOSE  8998
 COPY    conf/* $SPARK_CONF_DIR/
 COPY    run.sh $SPARK_HOME/
 COPY    jars/* $SPARK_HOME/jars/
+
+COPY    livyconf/* ${LIVY_HOME}/conf/
 
 RUN     chmod +x $SPARK_HOME/run.sh \
      && mkdir -p /myvol \
