@@ -5,16 +5,15 @@ MAINTAINER Hongchuang <hehongchuang@hotmail.com>
 ENV     SPARK_HOME=/opt/spark 
 ENV     SPARK_CONF_DIR=$SPARK_HOME/conf
 ENV     PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin 
-ENV     SPARK_VERSION=2.1.1
+ENV     SPARK_VERSION=2.2.0
 ENV     SPARK_URL=http://mirrors.tuna.tsinghua.edu.cn/apache
 #ENV     SPARK_URL=http://www.gtlib.gatech.edu/pub/apache
 
-#install spark 2.1.1
 RUN     mkdir -p ${SPARK_HOME} \
      && wget -q -O - ${SPARK_URL}/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz | tar -xzC ${SPARK_HOME} --strip-components=1 \
         # install python related library
      && apt-get install -y python-matplotlib \
-     && pip install numpy scipy pandas
+     && pip install numpy scipy pandas requests
 
 ENV     LIVY_VERSION=0.3.0
 ENV     LIVY_HOME=/opt/livy-server-${LIVY_VERSION}
