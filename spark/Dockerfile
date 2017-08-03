@@ -30,6 +30,7 @@ EXPOSE  8888
 COPY    conf/* $SPARK_CONF_DIR/
 COPY    run.sh $SPARK_HOME/
 COPY    jars/* $SPARK_HOME/jars/
+COPY    scripts/* $SPARK_HOME/scripts/
 
 RUN     chmod +x $SPARK_HOME/run.sh \
      && mkdir -p /myvol \

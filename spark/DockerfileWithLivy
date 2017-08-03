@@ -43,6 +43,7 @@ EXPOSE  8998
 COPY    conf/* $SPARK_CONF_DIR/
 COPY    run.sh $SPARK_HOME/
 COPY    jars/* $SPARK_HOME/jars/
+COPY    scripts/* $SPARK_HOME/scripts/
 
 COPY    livyconf/* ${LIVY_HOME}/conf/
 

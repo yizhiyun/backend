@@ -54,7 +54,11 @@ elif [ $HDFS_TYPE = "datanode" ]; then
   hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
 elif [ $HDFS_TYPE = "all" ]; then
   #start hdfs integrated with namenode, secondary namenode, datanode
-  start-dfs.sh
+  #start-dfs.sh
+  # format namenode
+  hdfs namenode -format
+  hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
+  hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
 else
   echo "Do nothing for hdfs service."
 fi
@@ -119,6 +123,8 @@ fi
 if [ ${START_LIVY_SERVER} = "true" ]
 then
   livy-server start;
+  sleep 6;
+  python $SPARK_HOME/scripts/livysessions.py add;
 fi
 
 tail -f /dev/null
