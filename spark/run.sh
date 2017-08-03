@@ -15,6 +15,10 @@ cat ~/.ssh/id_rsa.pub >> /myvol/authorized_keys
 #start ssh service
 service ssh start
 
+# fix the warn of "Unable to load native-hadoop library..."
+echo "export LD_LIBRARY_PATH=\$HADOOP_HOME/lib/native" >> /root/.bashrc
+source /root/.bashrc
+
 #waitting for the id_rsa.pub of all nodes has been added into the /myvol/authorized_keys file
 sleep 3
 cp /myvol/authorized_keys ~/.ssh/authorized_keys
@@ -77,29 +81,37 @@ sed -i ${SPARK_CONF_DIR}/spark-defaults.conf -e "s/{{sparkHistoryLogDir}}/${SPAR
 echo "spark.sql.warehouse.dir=hdfs://${HDFS_HOST}:9000/user/hive/warehouse" >> ${SPARK_CONF_DIR}/spark-defaults.conf 
 sed -i ${SPARK_CONF_DIR}/hive-site.xml -e "s/\${system:java.io.tmpdir}/\/opt\/spark\/local/g"
 sed -i ${SPARK_CONF_DIR}/hive-site.xml -e "s/\${system:user.name}/hive/g"
-
-# fix the warn of "Unable to load native-hadoop library..."
-echo "export LD_LIBRARY_PATH=\$HADOOP_HOME/lib/native" >> ~/.bashrc
-source ~/.bashrc
+echo -e ${WORKER_LIST} > ${SPARK_CONF_DIR}/slaves;
 
 #start spark if it's master node
 if [ $SPARK_TYPE = "master" ]
 then
-  echo -e ${WORKER_LIST} > ${SPARK_CONF_DIR}/slaves;
-  $SPARK_HOME/sbin/start-all.sh;
+  $SPARK_HOME/sbin/start-master.sh;
+  $SPARK_HOME/sbin/start-slaves.sh;
 fi
 
 ##start spark if it's slave node
 #if [ $SPARK_TYPE = "slave" ]
 #then
-#  echo -e ${WORKER_LIST} > ${SPARK_CONF_DIR}/slaves;
-#  $SPARK_HOME/sbin/start-slave.sh;
+#  $SPARK_HOME/sbin/start-slave.sh ${SPARK_MASTER_URL//\\/};
 #fi
 
 #start spark if it's master node
 if [ $START_SPARK_HISTORY_SERVER = "true" ]
 then
-  mkdir -p /tmp/spark-events /tmp/eventlog
+  if [[ ${SPARK_EVENTLOG_DIR} == hdfs* ]];
+  then
+    hdfs dfs -mkdir -p ${SPARK_EVENTLOG_DIR//\\/}
+  else
+    mkdir -p ${SPARK_EVENTLOG_DIR//\\/}
+  fi
+
+  if [[ ${SPARK_HISTORYLOG_DIR} == hdfs* ]];
+  then
+    hdfs dfs -mkdir -p ${SPARK_HISTORYLOG_DIR//\\/}
+  else
+    mkdir -p ${SPARK_HISTORYLOG_DIR//\\/}
+  fi
   $SPARK_HOME/sbin/start-history-server.sh;
 fi
 
