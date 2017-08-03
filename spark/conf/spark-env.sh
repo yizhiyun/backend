@@ -1,0 +1,8 @@
+HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+
+SPARK_LOCAL_DIRS=/opt/spark
+#SPARK_DRIVER_MEMORY=1G
+
+#SPARK_DIST_CLASSPATH="$SPARK_HOME/jars/*"
+SPARK_LIBARY_PATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$HADOOP_HOME/lib/native
+

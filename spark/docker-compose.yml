@@ -11,7 +11,8 @@ services:
       - SPARK_TYPE=master
       - SPARK_MASTER_URL=spark:\/\/spark-master0:7077
       - START_SPARK_HISTORY_SERVER=true
-      - SPARK_EVENTLOG_DIR:=hdfs:\/\/spark-master0:9000\/spark\/eventlog
+      - SPARK_HISTORYLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/spark-events
+      - SPARK_EVENTLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/eventlog
       - WORKER_LIST=spark-worker0 \nspark-worker1
       - HDFS_HOST=spark-master0
       - SLAVE_LIST=spark-worker0 \nspark-worker1
@@ -35,8 +36,9 @@ services:
       - 7077:7077 # master service
       - 6066:6066 # REST server
       - 18080:18080 # history server
-      - 4040 # driverProgramWebUI
-      - 4041
+      - 4040:4040 # driverProgramWebUI
+      - 4041:4041
+      - 4042:4042
       - 8888:8888 # ipython notebook
       # HDFS ENV
       - 50070:50070 # name node port
@@ -57,7 +59,10 @@ services:
     hostname: spark-worker0
     environment:
       - SPARK_TYPE=slave
-      - SPARK_MASTER=spark:\/\/spark-master0:7077
+      - SPARK_MASTER_URL=spark:\/\/spark-master0:7077
+      - WORKER_LIST=spark-worker0 \nspark-worker1
+      - SPARK_HISTORYLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/spark-events
+      - SPARK_EVENTLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/eventlog
       # HDFS ENV
       - HDFS_HOST=spark-master0
       - SLAVE_LIST=spark-worker0 \nspark-worker1
@@ -78,11 +83,11 @@ services:
     ports:
       - 8081:8081 # workerUI
       - 6066
-      - 4040:4040
-      - 4041:4041
+      - 4040 # driverProgramWebUI
       # HDFS ports
       - 50010:50010
       - 50020:50020
+      - 50075:50075
       - 8088  # resource manager webapp port
       - 19888 # mapreduce job history webapp server
     networks:
@@ -95,6 +100,9 @@ services:
     environment:
       - SPARK_TYPE=slave
       - SPARK_MASTER_URL=spark:\/\/spark-master0:7077
+      - WORKER_LIST=spark-worker0 \nspark-worker1
+      - SPARK_HISTORYLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/spark-events
+      - SPARK_EVENTLOG_DIR=hdfs:\/\/spark-master0:9000\/spark\/eventlog
       # HDFS ENV
       - HDFS_HOST=spark-master0
       - SLAVE_LIST=spark-worker0 \nspark-worker1
@@ -115,11 +123,11 @@ services:
     ports:
       - 8091:8081 # workerUI
       - 6066
-      - 4050:4040
-      - 4051:4041
+      - 4040 # driverProgramWebUI
       # HDFS ports
       - 50011:50010
       - 50021:50020
+      - 50076:50075
       - 8088  # resource manager webapp port
       - 19888 # mapreduce job history webapp server
     networks:
