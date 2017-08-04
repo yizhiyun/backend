@@ -17,7 +17,11 @@ def handle_argument():
     add_parser.add_argument('--livyRootUrl', nargs='?',
                             default='http://spark-master0:8998', help='livy server root url.')
 
-    clean_parser = subparsers.add_parser('clean', help="clean extra sessions if there are more sessions.")
+    clean_parser = subparsers.add_parser('lessen', help="delete extra sessions if there are more sessions.")
+    clean_parser.add_argument('--livyRootUrl', nargs='?',
+                              default='http://spark-master0:8998', help='livy server root url.')
+
+    clean_parser = subparsers.add_parser('clean', help="clean all sessions.")
     clean_parser.add_argument('--livyRootUrl', nargs='?',
                               default='http://spark-master0:8998', help='livy server root url.')
 
@@ -32,7 +36,7 @@ def handleLivySessions(manageType,
                        livyRootUrl='http://spark-master0:8998',
                        pyFiles=[]):
     '''
-    manageType is one of ['clean', 'add']
+    manageType is one of ['clean', 'add', 'lessen']
     '''
     rootUrl = livyRootUrl
     sessionData = {
@@ -43,7 +47,7 @@ def handleLivySessions(manageType,
 
     rootSessionsUrl = rootUrl + '/sessions'
     curSessionsReqJson = requests.get(rootSessionsUrl, headers=headers).json()
-    if manageType == 'clean':
+    if manageType == 'lessen':
         # If there are many sessions, clean the sessions whose state is in the sessionState list.
         # As for the last one, delete it if this session state is in the ['error', 'dead', 'success'] list
         if (curSessionsReqJson['total'] > 0):
@@ -59,10 +63,17 @@ def handleLivySessions(manageType,
                 requests.delete(sessionUrl)
         else:
             pass
+    if manageType == 'clean':
+        # clean all the sessions.
+        if (curSessionsReqJson['total'] > 0):
+            for sessionItem in curSessionsReqJson['sessions']:
+                sessionUrl = "{0}/{1}".format(rootSessionsUrl, sessionItem['id'])
+                requests.delete(sessionUrl)
+        else:
+            pass
     elif manageType == 'add':
         # If there is no session, create a new one
         if (curSessionsReqJson['total'] > 0):
-
             pass
         else:
             requests.post(
@@ -73,6 +84,8 @@ def handleLivySessions(manageType,
 
 if args.action == "add":
     handleLivySessions('add', args.livyRootUrl)
+elif args.action == "lessen":
+    handleLivySessions('lessen', args.livyRootUrl)
 elif args.action == "clean":
     handleLivySessions('clean', args.livyRootUrl)
 else:
