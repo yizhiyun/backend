@@ -13,7 +13,7 @@ RUN     mkdir -p ${SPARK_HOME} \
      && wget -q -O - ${SPARK_URL}/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz | tar -xzC ${SPARK_HOME} --strip-components=1 \
         # install python related library
      && apt-get install -y python-matplotlib \
-     && pip install numpy scipy pandas requests
+     && pip install numpy scipy pandas requests statsmodels
 
 ENV     LIVY_VERSION=0.3.0
 ENV     LIVY_HOME=/opt/livy-server-${LIVY_VERSION}

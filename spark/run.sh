@@ -44,7 +44,7 @@ echo -e ${SLAVE_LIST} > ${HADOOP_CONF_DIR}/slaves
 #start the related-type hdfs
 if [ $HDFS_TYPE = "namenode" ]; then
   # format namenode
-  hdfs namenode -format
+  hdfs namenode -format  -nonInteractive
   hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
 elif [ $HDFS_TYPE = "backup" ]; then
   hdfs namenode -backup;
@@ -56,7 +56,7 @@ elif [ $HDFS_TYPE = "all" ]; then
   #start hdfs integrated with namenode, secondary namenode, datanode
   #start-dfs.sh
   # format namenode
-  hdfs namenode -format
+  hdfs namenode -format -nonInteractive
   hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
   hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
 else
