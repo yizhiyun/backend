@@ -49,7 +49,6 @@ COPY    livyconf/* ${LIVY_HOME}/conf/
 
 RUN     chmod +x $SPARK_HOME/run.sh \
      && mkdir -p /myvol \
-        # ssh without key
      && ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
      && mv $SPARK_CONF_DIR/ssh_config ~/.ssh/config 
 
