@@ -1,5 +1,6 @@
 import requests
 import json
+import traceback
 
 
 def handle_argument():
@@ -46,7 +47,11 @@ def handleLivySessions(manageType,
     headers = {'Content-Type': 'application/json'}
 
     rootSessionsUrl = rootUrl + '/sessions'
-    curSessionsReqJson = requests.get(rootSessionsUrl, headers=headers).json()
+    try:
+        curSessionsReqJson = requests.get(rootSessionsUrl, headers=headers).json()
+    except Exception:
+        traceback.print_exc()
+        return False
     if manageType == 'lessen':
         # If there are many sessions, clean the sessions whose state is in the sessionState list.
         # As for the last one, delete it if this session state is in the ['error', 'dead', 'success'] list
