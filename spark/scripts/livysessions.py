@@ -1,6 +1,7 @@
 import requests
 import json
 import traceback
+import time
 
 
 def handle_argument():
@@ -47,11 +48,20 @@ def handleLivySessions(manageType,
     headers = {'Content-Type': 'application/json'}
 
     rootSessionsUrl = rootUrl + '/sessions'
-    try:
-        curSessionsReqJson = requests.get(rootSessionsUrl, headers=headers).json()
-    except Exception:
-        traceback.print_exc()
-        return False
+    maxSteps, step, loopFlag = 30, 0, True
+    while step < maxSteps and loopFlag:
+        try:
+            curSessionsReqJson = requests.get(rootSessionsUrl, headers=headers).json()
+            loopFlag = False
+        except Exception:
+            time.sleep(1)
+            step += 1
+            if step == maxSteps:
+                traceback.print_exc()
+                return False
+            else:
+                print("Fail to get session from livy server. Retry it again.")
+
     if manageType == 'lessen':
         # If there are many sessions, clean the sessions whose state is in the sessionState list.
         # As for the last one, delete it if this session state is in the ['error', 'dead', 'success'] list
@@ -61,11 +71,13 @@ def handleLivySessions(manageType,
                 if (sessionItem['state'] in sessionStates):
                     sessionUrl = "{0}/{1}".format(rootSessionsUrl, sessionItem['id'])
                     requests.delete(sessionUrl)
+                    print("delete session:{0} sucessfully".format(sessionUrl))
             # handle the last one session specially
             lastOneStatesLt = ['error', 'dead', 'success']
             if curSessionsReqJson['sessions'][-1]['state'] in lastOneStatesLt:
                 sessionUrl = "{0}/{1}".format(rootSessionsUrl, curSessionsReqJson['sessions'][-1]['id'])
                 requests.delete(sessionUrl)
+                print("delete session:{0} sucessfully".format(sessionUrl))
         else:
             pass
     if manageType == 'clean':
@@ -74,6 +86,7 @@ def handleLivySessions(manageType,
             for sessionItem in curSessionsReqJson['sessions']:
                 sessionUrl = "{0}/{1}".format(rootSessionsUrl, sessionItem['id'])
                 requests.delete(sessionUrl)
+                print("delete session:{0} sucessfully".format(sessionUrl))
         else:
             pass
     elif manageType == 'add':
@@ -83,6 +96,7 @@ def handleLivySessions(manageType,
         else:
             requests.post(
                 rootSessionsUrl, data=json.dumps(sessionData), headers=headers).json()
+            print("create a new session sucessfully")
     else:
         pass
 
