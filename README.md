@@ -13,50 +13,41 @@ Prerequisites
 How To Start
 -----
 #### 1. download the project into local machine.
-```
-git clone https://github.com/yizhiyun/backend.git
-```
+> git clone https://github.com/yizhiyun/backend.git
+
 #### 2. go to spark folder
-```
-cd backend/spark
-```
-#### 3. Start docker image using docker-compose
-```
-docker-compose build; docker-compose up -d
-```
+> cd backend/spark
+
+#### 3. pull or build image
+> docker pull hongchhe/sparkwithlivy
+or
+> docker build -f DockerfileWithLivy -t hongchhe/sparkwithlivy .
 Note: it might spend a long time to download and build image at the first time.
 
+#### 4.Start docker image using docker-compose
+> docker-compose up -d
+
 #### 4. Stop docker image using docker-compose
-```
-docker-compose stop; docker-compose rm -f
-```
+> docker-compose stop; docker-compose rm -f
 
 
 How To Detect
 -----
 #### 1. go to container to see the details using container id
-```
-docker exec -it spark-master0 bash
-```
+> docker exec -it spark-master0 bash
 
 #### 2. check the running the logs using container id
-```
-docker logs spark-master0
-```
+> docker logs spark-master0
+
 #### 3. test if the spark works
-```
-curl http://127.0.0.1:8080
-```
+>curl http://127.0.0.1:8080
 
 #### 4. test if the hdfs works
-```
-curl http://127.0.0.1:50070
-```
+> curl http://127.0.0.1:50070
 
 #### 4. test if the livy works
-```
-curl http://127.0.0.1:8998
-```
+> curl http://127.0.0.1:8998
+
 
 How To Restart if some file has been modified
 -----
