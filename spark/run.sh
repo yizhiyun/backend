@@ -25,6 +25,7 @@ cp /myvol/authorized_keys ~/.ssh/authorized_keys
 
 
 : ${HDFS_HOST:=localhost}
+: ${HDFS_WORK_BASE_DIR:="\/tmp"}
 # split each slave using "\n". For example: lh1 \nlh2 
 : ${SLAVE_LIST:=localhost}
 # HDFS types: namenode, checkpoint, backup, datanode
@@ -34,6 +35,7 @@ cp /myvol/authorized_keys ~/.ssh/authorized_keys
 : ${HDFS_REPLICA:=1}
 
 sed -i ${HADOOP_CONF_DIR}/core-site.xml -e "s/{{hdfsHost}}/${HDFS_HOST}/"
+sed -i ${HADOOP_CONF_DIR}/core-site.xml -e "s/{{hdfsWorkBaseDir}}/${HDFS_WORK_BASE_DIR}/"
 sed -i ${HADOOP_CONF_DIR}/hdfs-site.xml -e "s/{{hdfsHost}}/${HDFS_HOST}/"
 sed -i ${HADOOP_CONF_DIR}/mapred-site.xml -e "s/{{hdfsHost}}/${HDFS_HOST}/"
 sed -i ${HADOOP_CONF_DIR}/yarn-site.xml -e "s/{{hdfsHost}}/${HDFS_HOST}/"

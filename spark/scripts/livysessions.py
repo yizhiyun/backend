@@ -40,7 +40,7 @@ def handleLivySessions(manageType,
     '''
     rootUrl = livyRootUrl
     sessionData = {
-        'kind': 'pyspark',
+        'kind': 'pyspark3',
         'pyFiles': pyFiles
     }
     headers = {'Content-Type': 'application/json'}

@@ -10,32 +10,33 @@ ENV     SPARK_URL=http://mirrors.tuna.tsinghua.edu.cn/apache
 #ENV     SPARK_URL=http://www.gtlib.gatech.edu/pub/apache
 
 RUN     mkdir -p ${SPARK_HOME} \
-     && wget -q -O - ${SPARK_URL}/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz | tar -xzC ${SPARK_HOME} --strip-components=1
-RUN     apt-get update \
-     && apt-get install -y python-matplotlib
-RUN     pip install numpy scipy pandas requests statsmodels
+     && wget -q -O - ${SPARK_URL}/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz | tar -xzC ${SPARK_HOME} --strip-components=1 \
+     && pip install numpy scipy pandas requests statsmodels
 
-ENV     LIVY_VERSION=0.3.0
-ENV     LIVY_HOME=/opt/livy-server-${LIVY_VERSION}
+ENV     LIVY_VERSION=0.4.0-incubating
+ENV     LIVY_HOME=/opt/livy
 RUN     cd /opt \
-     && wget -q http://archive.cloudera.com/beta/livy/livy-server-${LIVY_VERSION}.zip \
+     && wget -q http://mirrors.hust.edu.cn/apache/incubator/livy/${LIVY_VERSION}/livy-${LIVY_VERSION}-bin.zip \
      && apt-get install unzip \
-     && unzip livy-server-${LIVY_VERSION}.zip \
-     && rm -f livy-server-${LIVY_VERSION}.zip \
+     && unzip livy-${LIVY_VERSION}-bin.zip \
+     && mv livy-${LIVY_VERSION}-bin ${LIVY_HOME} \
+     && rm -f livy-${LIVY_VERSION}-bin.zip \
      && mkdir ${LIVY_HOME}/logs \
      && mv ${LIVY_HOME}/conf ${LIVY_HOME}/conf.bak
 
 
-ENV     PYSPARK_PYTHON=/usr/bin/python2.7
-ENV     PYSPARK_DRIVER_PYTHON=ipython
-ENV     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=* --matplotlib=inline"
+ENV     PYSPARK_PYTHON=/usr/bin/python
+#ENV     PYSPARK_DRIVER_PYTHON=ipython
+#ENV     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=* --matplotlib=inline"
+ENV     PYSPARK_DRIVER_PYTHON=jupyter
+ENV     PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 ENV     PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin:${LIVY_HOME}/bin"
 
 # masterWebUI / master service / REST server / history server
 EXPOSE  8080 7077 6066 18080
 # workerUI / driverProgramWebUI
-EXPOSE  8081 4040 4041
-# ipython notebook
+EXPOSE  8081 4040 4041 4042 4043 4044 4045 4046 4047 4048
+# jupyter notebook
 EXPOSE  8888
 # livy
 EXPOSE  8998
@@ -50,7 +51,9 @@ COPY    livyconf/* ${LIVY_HOME}/conf/
 RUN     chmod +x $SPARK_HOME/run.sh \
      && mkdir -p /myvol \
      && ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
-     && mv $SPARK_CONF_DIR/ssh_config ~/.ssh/config 
+     && mv $SPARK_CONF_DIR/ssh_config ~/.ssh/config \
+     && jupyter notebook --generate-config --allow-root \
+     && mv $SPARK_CONF_DIR/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
 
 VOLUME /myvol
 

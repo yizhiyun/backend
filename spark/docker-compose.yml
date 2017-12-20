@@ -1,9 +1,9 @@
 version: '3.0'
 services:
   spark-master0:
-    build:
-      context: .
-      dockerfile: DockerfileWithLivy
+    # build:
+    #   context: .
+    #   dockerfile: DockerfileWithLivy
     image: hongchhe/sparkwithlivy
     container_name: spark-master0
     hostname: spark-master0
@@ -16,6 +16,7 @@ services:
       - WORKER_LIST=spark-master0
       - HDFS_HOST=spark-master0
       - SLAVE_LIST=spark-master0
+      - HDFS_WORK_BASE_DIR=\/myvol\/spark-master0
       - HDFS_TYPE=all
       - YARN_TYPE=none
       - HDFS_REPLICA=1
