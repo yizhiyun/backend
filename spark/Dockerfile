@@ -7,15 +7,12 @@ ENV     SPARK_CONF_DIR=$SPARK_HOME/conf
 ENV     PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin 
 ENV     SPARK_VERSION=2.2.0
 ENV     SPARK_URL=http://mirrors.tuna.tsinghua.edu.cn/apache
-#ENV     SPARK_URL=http://www.gtlib.gatech.edu/pub/apache
 
 RUN     mkdir -p ${SPARK_HOME} \
      && wget -q -O - ${SPARK_URL}/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz | tar -xzC ${SPARK_HOME} --strip-components=1 \
      && pip install numpy scipy pandas requests statsmodels
 
 ENV     PYSPARK_PYTHON=/usr/bin/python
-#ENV     PYSPARK_DRIVER_PYTHON=ipython
-#ENV     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=* --matplotlib=inline"
 ENV     PYSPARK_DRIVER_PYTHON=jupyter
 ENV     PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 ENV     PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
