@@ -1,11 +1,11 @@
-FROM hongchhe/hadoop
+FROM hongchhe/hadoop:2.7.4-3.5.2
 MAINTAINER Hongchuang <hehongchuang@hotmail.com>
 
 # set environment variable
 ENV     SPARK_HOME=/opt/spark 
 ENV     SPARK_CONF_DIR=$SPARK_HOME/conf
 ENV     PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin 
-ENV     SPARK_VERSION=2.2.0
+ENV     SPARK_VERSION=2.2.1
 ENV     SPARK_URL=http://mirrors.tuna.tsinghua.edu.cn/apache
 
 RUN     mkdir -p ${SPARK_HOME} \
