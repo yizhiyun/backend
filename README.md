@@ -19,9 +19,11 @@ How To Start
 > cd backend/spark
 
 #### 3. pull or build image
-> docker pull hongchhe/sparkwithlivy
+```
+docker pull hongchhe/sparkwithlivy
 or
-> docker build -f DockerfileWithLivy -t hongchhe/sparkwithlivy .
+docker build -f DockerfileWithLivy -t hongchhe/sparkwithlivy .
+```
 Note: it might spend a long time to download and build image at the first time.
 
 #### 4.Start docker image using docker-compose
